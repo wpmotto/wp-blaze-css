@@ -3,14 +3,17 @@
 /**
  * Fired during plugin deactivation
  *
- * @link       http://example.com
+ * @link       https://github.com/wpmotto/wp-blaze-css
  * @since      1.0.0
  *
- * @package    PluginName
- * @subpackage PluginName/includes
+ * @package    BlazeCss
+ * @subpackage BlazeCss/includes
  */
 
 namespace Motto\BlazeCss;
+
+use Motto\BlazeCss\Plugin;
+use Motto\BlazeCss\Common\Schema;
 
 /**
  * Fired during plugin deactivation.
@@ -18,9 +21,9 @@ namespace Motto\BlazeCss;
  * This class defines all code necessary to run during the plugin's deactivation.
  *
  * @since      1.0.0
- * @package    PluginName
- * @subpackage PluginName/includes
- * @author     Your Name <email@example.com>
+ * @package    BlazeCss
+ * @subpackage BlazeCss/includes
+ * @author     Greg Hunt <plugins@wpmotto.com>
  */
 class Deactivator {
 
@@ -32,8 +35,8 @@ class Deactivator {
 	 * @since    1.0.0
 	 */
 	public static function deactivate() {
-		$plugin = new \Motto\BlazeCss\Plugin();
-		$plugin->get_db()->destroy();
+		$schema = new Schema((new Plugin));
+		$schema->destroy();
 	}
 
 }

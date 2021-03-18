@@ -6,16 +6,14 @@
  * A class definition that includes attributes and functions used across both the
  * public-facing side of the site and the dashboard.
  *
- * @link       http://example.com
+ * @link       https://github.com/wpmotto/wp-blaze-css
  * @since      1.0.0
  *
- * @package    PluginName
- * @subpackage PluginName/includes
+ * @package    BlazeCss
+ * @subpackage BlazeCss/includes
  */
 
 namespace Motto\BlazeCss;
-
-use Motto\BlazeCss\Common\DB;
 
 /**
  * The core plugin class.
@@ -27,9 +25,9 @@ use Motto\BlazeCss\Common\DB;
  * version of the plugin.
  *
  * @since      1.0.0
- * @package    PluginName
- * @subpackage PluginName/includes
- * @author     Your Name <email@example.com>
+ * @package    BlazeCss
+ * @subpackage BlazeCss/includes
+ * @author     Greg Hunt <plugins@wpmotto.com>
  */
 class Plugin {
 
@@ -39,7 +37,7 @@ class Plugin {
 	 *
 	 * @since    1.0.0
 	 * @access   protected
-	 * @var      PluginName_Loader    $loader    Maintains and registers all hooks for the plugin.
+	 * @var      Motto\BlazeCss\Loader    $loader    Maintains and registers all hooks for the plugin.
 	 */
 	protected $loader;
 
@@ -50,9 +48,9 @@ class Plugin {
 	 *
 	 * @since    1.0.0
 	 * @access   protected
-	 * @var      string    $pluginname    The string used to uniquely identify this plugin.
+	 * @var      string    $BlazeCss    The string used to uniquely identify this plugin.
 	 */
-	protected $pluginname = 'blaze';
+	protected $BlazeCss = 'blaze';
 
 	/**
 	 * The current version of the plugin.
@@ -73,7 +71,6 @@ class Plugin {
 	 */
 	public function __construct() {
 		$this->loader = new Loader();
-		$this->db = new DB($this);
 	}
 
 	/**
@@ -122,8 +119,10 @@ class Plugin {
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_frontend, 'enqueue_scripts' );
 
+		$this->loader->add_action( 'get_header', $plugin_frontend, 'debug' );
+
 		// to logged in users
-        $this->loader->add_action( 'wp_ajax_blaze_ajax', $plugin_frontend, 'save_page_elements' );
+        // $this->loader->add_action( 'wp_ajax_blaze_ajax', $plugin_frontend, 'save_page_elements' );
 		
         // to not logged in users or users without permissions
         $this->loader->add_action( 'wp_ajax_nopriv_blaze_ajax', $plugin_frontend, 'save_page_elements' );
@@ -145,14 +144,6 @@ class Plugin {
 	}
 
 	/**
-	 * @since     1.0.0
-	 * @return    \Motto\BlazeCss\Common\DB
-	 */
-	public function get_db() {
-		return $this->db;
-	}
-
-	/**
 	 * The name of the plugin used to uniquely identify it within the context of
 	 * WordPress and to define internationalization functionality.
 	 *
@@ -160,7 +151,7 @@ class Plugin {
 	 * @return    string    The name of the plugin.
 	 */
 	public function get_plugin_name() {
-		return $this->pluginname;
+		return $this->BlazeCss;
 	}
 
 	/**
@@ -168,14 +159,14 @@ class Plugin {
 	 * @return    string    The Ajax nonce name
 	 */
 	public function get_ajax_nonce_name() {
-		return $this->pluginname . '_ajax_nonce';
+		return $this->BlazeCss . '_ajax_nonce';
 	}
 
 	/**
 	 * The reference to the class that orchestrates the hooks with the plugin.
 	 *
 	 * @since     1.0.0
-	 * @return    PluginName_Loader    Orchestrates the hooks of the plugin.
+	 * @return    BlazeCss_Loader    Orchestrates the hooks of the plugin.
 	 */
 	public function get_loader() {
 		return $this->loader;
@@ -191,4 +182,14 @@ class Plugin {
 		return $this->version;
 	}
 
+	public function log( $log )
+	{
+		if (true === WP_DEBUG) {
+			if (is_array($log) || is_object($log)) {
+				error_log(print_r($log, true));
+			} else {
+				error_log($log);
+			}
+		}
+	}
 }

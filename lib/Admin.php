@@ -3,11 +3,11 @@
 /**
  * The dashboard-specific functionality of the plugin.
  *
- * @link       http://example.com
+ * @link       https://github.com/wpmotto/wp-blaze-css
  * @since      1.0.0
  *
- * @package    PluginName
- * @subpackage PluginName/admin
+ * @package    BlazeCss
+ * @subpackage BlazeCss/admin
  */
 
 namespace Motto\BlazeCss;
@@ -18,9 +18,9 @@ namespace Motto\BlazeCss;
  * Defines the plugin name, version, and two examples hooks for how to
  * enqueue the dashboard-specific stylesheet and JavaScript.
  *
- * @package    PluginName
- * @subpackage PluginName/admin
- * @author     Your Name <email@example.com>
+ * @package    BlazeCss
+ * @subpackage BlazeCss/admin
+ * @author     Greg Hunt <plugins@wpmotto.com>
  */
 class Admin {
 
@@ -55,10 +55,10 @@ class Admin {
 		 * This function is provided for demonstration purposes only.
 		 *
 		 * An instance of this class should be passed to the run() function
-		 * defined in PluginName_Loader as all of the hooks are defined
+		 * defined in BlazeCss_Loader as all of the hooks are defined
 		 * in that particular class.
 		 *
-		 * The PluginName_Loader will then create the relationship
+		 * The BlazeCss_Loader will then create the relationship
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
@@ -83,10 +83,10 @@ class Admin {
 		 * This function is provided for demonstration purposes only.
 		 *
 		 * An instance of this class should be passed to the run() function
-		 * defined in PluginName_Loader as all of the hooks are defined
+		 * defined in BlazeCss_Loader as all of the hooks are defined
 		 * in that particular class.
 		 *
-		 * The PluginName_Loader will then create the relationship
+		 * The BlazeCss_Loader will then create the relationship
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */

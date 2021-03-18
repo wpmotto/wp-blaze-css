@@ -3,11 +3,11 @@
 /**
  * Register all actions and filters for the plugin
  *
- * @link       http://example.com
+ * @link       https://github.com/wpmotto/wp-blaze-css
  * @since      1.0.0
  *
- * @package    PluginName
- * @subpackage PluginName/includes
+ * @package    BlazeCss
+ * @subpackage BlazeCss/includes
  */
 
 namespace Motto\BlazeCss;
@@ -19,9 +19,9 @@ namespace Motto\BlazeCss;
  * the plugin, and register them with the WordPress API. Call the
  * run function to execute the list of actions and filters.
  *
- * @package    PluginName
- * @subpackage PluginName/includes
- * @author     Your Name <email@example.com>
+ * @package    BlazeCss
+ * @subpackage BlazeCss/includes
+ * @author     Greg Hunt <plugins@wpmotto.com>
  */
 class Loader {
 

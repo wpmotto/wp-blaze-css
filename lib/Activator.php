@@ -3,14 +3,17 @@
 /**
  * Fired during plugin activation
  *
- * @link       http://example.com
+ * @link       https://github.com/wpmotto/wp-blaze-css
  * @since      1.0.0
  *
- * @package    PluginName
- * @subpackage PluginName/includes
+ * @package    BlazeCss
+ * @subpackage BlazeCss/includes
  */
 
 namespace Motto\BlazeCss;
+
+use Motto\BlazeCss\Plugin;
+use Motto\BlazeCss\Common\Schema;
 
 /**
  * Fired during plugin activation.
@@ -18,9 +21,9 @@ namespace Motto\BlazeCss;
  * This class defines all code necessary to run during the plugin's activation.
  *
  * @since      1.0.0
- * @package    PluginName
- * @subpackage PluginName/includes
- * @author     Your Name <email@example.com>
+ * @package    BlazeCss
+ * @subpackage BlazeCss/includes
+ * @author     Greg Hunt <plugins@wpmotto.com>
  */
 class Activator {
 
@@ -32,8 +35,8 @@ class Activator {
 	 * @since    1.0.0
 	 */
 	public static function activate() {
-		$plugin = new \Motto\BlazeCss\Plugin();
-		$plugin->get_db()->init();
+		$schema = new Schema((new Plugin));
+		$schema->init();
 	}
 
 }

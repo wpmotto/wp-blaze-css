@@ -6,11 +6,11 @@
  * Loads and defines the internationalization files for this plugin
  * so that it is ready for translation.
  *
- * @link       http://example.com
+ * @link       https://github.com/wpmotto/wp-blaze-css
  * @since      1.0.0
  *
- * @package    PluginName
- * @subpackage PluginName/includes
+ * @package    BlazeCss
+ * @subpackage BlazeCss/includes
  */
 
 namespace Motto\BlazeCss;
@@ -22,9 +22,9 @@ namespace Motto\BlazeCss;
  * so that it is ready for translation.
  *
  * @since      1.0.0
- * @package    PluginName
- * @subpackage PluginName/includes
- * @author     Your Name <email@example.com>
+ * @package    BlazeCss
+ * @subpackage BlazeCss/includes
+ * @author     Greg Hunt <plugins@wpmotto.com>
  */
 class I18n {
 

@@ -3,7 +3,7 @@
 /**
  * The public-facing functionality of the plugin.
  *
- * @link       http://example.com
+ * @link       https://github.com/wpmotto/wp-blaze-css
  * @since      1.0.0
  *
  * @package    BlazeCss
@@ -13,6 +13,7 @@
 namespace Motto\BlazeCss;
 
 use Motto\BlazeCss\Common\Logger;
+use Motto\BlazeCss\Models\Element;
 
 /**
  * The public-facing functionality of the plugin.
@@ -22,7 +23,7 @@ use Motto\BlazeCss\Common\Logger;
  *
  * @package    Plugin_Name
  * @subpackage Plugin_Name/Frontend
- * @author     Your Name <email@example.com>
+ * @author     Greg Hunt <plugins@wpmotto.com>
  */
 class Frontend {
 
@@ -52,6 +53,9 @@ class Frontend {
 	 * @since    1.0.0
 	 */
 	public function enqueue_scripts() {
+		if( is_user_logged_in() )
+			return;
+
 		\wp_enqueue_script(
 			$this->plugin->get_plugin_name(),
 			\plugin_dir_url( dirname( __FILE__ ) ) . 'dist/scripts/blaze.js',
@@ -76,10 +80,16 @@ class Frontend {
 			'_ajax_nonce' 
 		);
 
-        $logger = new Logger($_POST);
-        print_r(
-			$logger
-		);
+        $logger = new Logger($_POST, $this->plugin);
+		$logger->save();
+		echo json_encode([
+			'hash' => $logger->hash(),
+		]);
         die(); 
     }
+
+	public function debug()
+	{
+		//
+	}
 }

@@ -23,5 +23,5 @@ document.addEventListener("DOMContentLoaded",function(){
 			url: window.location.href,
 			log: JSON.stringify(log),
 		})
-	});
+	}).then(response => console.log(response.json()));
 });
