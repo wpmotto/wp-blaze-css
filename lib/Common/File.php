@@ -14,4 +14,10 @@ class File {
         file_put_contents($path, $classes);
     }
 
+    public static function writeCss( $content )
+    {
+		$path = wp_get_upload_dir()['basedir'] . '/blaze.css';
+        file_put_contents($path, $content);
+    }
+
 }
