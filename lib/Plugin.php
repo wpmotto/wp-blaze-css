@@ -41,6 +41,8 @@ class Plugin {
 	 */
 	protected $loader;
 
+	public $settings;
+
 	protected $db;
 
 	/**
@@ -71,6 +73,7 @@ class Plugin {
 	 */
 	public function __construct() {
 		$this->loader = new Loader();
+		$this->settings = new Settings($this);
 	}
 
 	/**
@@ -104,6 +107,14 @@ class Plugin {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 
+		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_settings_page' );
+		$this->loader->add_action( 'admin_init', $plugin_admin, 'init_settings' );
+
+		$plugin_options = $this->settings->get_plugin_options();
+
+		if( (isset($plugin_options['gcsv_auto']) && !$plugin_options['gcsv_auto']) || !isset($plugin_options['gcsv_auto']) ){
+			$this->loader->add_action( 'wp_ajax_blaze_generate_csv', $plugin_admin, 'generate_csv' );
+		}
 	}
 
 	/**
@@ -117,15 +128,19 @@ class Plugin {
 
 		$plugin_frontend = new Frontend( $this );
 
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_frontend, 'enqueue_scripts' );
+		$plugin_options = $this->settings->get_plugin_options();
 
-		$this->loader->add_action( 'get_header', $plugin_frontend, 'debug' );
+		if( isset($plugin_options['logging']) && $plugin_options['logging']){
+			$this->loader->add_action( 'wp_enqueue_scripts', $plugin_frontend, 'enqueue_scripts' );
 
-		// to logged in users
-        // $this->loader->add_action( 'wp_ajax_blaze_ajax', $plugin_frontend, 'save_page_elements' );
-		
-        // to not logged in users or users without permissions
-        $this->loader->add_action( 'wp_ajax_nopriv_blaze_ajax', $plugin_frontend, 'save_page_elements' );
+			$this->loader->add_action( 'get_header', $plugin_frontend, 'debug' );
+
+			// to logged in users
+			// $this->loader->add_action( 'wp_ajax_blaze_ajax', $plugin_frontend, 'save_page_elements' );
+			
+			// to not logged in users or users without permissions
+			$this->loader->add_action( 'wp_ajax_nopriv_blaze_ajax', $plugin_frontend, 'save_page_elements' );
+		}
 	}
 
 	/**

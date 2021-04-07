@@ -81,19 +81,19 @@ abstract class Model {
     public function get()
     {
         $sql = <<<SQL
-        SELECT {$this->query['select']} 
-        FROM {$this->getTable()}            
-        WHERE {$this->query['where']} 
-        SQL;
+SELECT {$this->query['select']} 
+FROM {$this->getTable()}            
+WHERE {$this->query['where']} 
+SQL;
         return $this->db->get_results( $this->db->prepare( $sql ) );        
     }
 
     public function find( $prop, $value )
     {
         $sql = <<<SQL
-        SELECT * FROM {$this->getTable()}
-        WHERE $prop = %s
-        SQL;
+SELECT * FROM {$this->getTable()}
+WHERE $prop = %s
+SQL;
 
         $row = $this->db->get_row( 
             $this->db->prepare( $sql, $value ), OBJECT

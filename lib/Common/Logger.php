@@ -46,7 +46,13 @@ class Logger {
         if( $this->cacheMiss() ) {
             $this->create();
             Element::fromLogger( $this );
-            File::write();
+
+            $plugin_options = $this->plugin->settings->get_plugin_options();
+            if( isset($plugin_options['gcsv_auto']) && $plugin_options['gcsv_auto'] ){
+                $file = new File($this->plugin);
+                $file->write();
+            }
+            
         }
     }
 
@@ -73,12 +79,15 @@ class Logger {
                 'hash' => $this->hash(),
             ]);
         } else {
+            $current_theme = wp_get_theme();
+
             $this->log = new Log;
             $this->log->insert([
                 'host' => $this->url->host,
                 'path' => $this->url->path,
                 'query' => $this->url->query,
                 'hash' => $this->hash(),
+                'theme' => $current_theme->get( 'Name' ),
             ]);
         }
 

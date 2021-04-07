@@ -35,8 +35,14 @@ class Deactivator {
 	 * @since    1.0.0
 	 */
 	public static function deactivate() {
-		$schema = new Schema((new Plugin));
-		$schema->destroy();
+		$plugin = new Plugin();
+
+		$plugin_options = $plugin->settings->get_plugin_options();
+		if( isset($plugin_options['clean_datas']) && $plugin_options['clean_datas']){
+			$schema = new Schema($plugin);
+			$schema->destroy();
+			$plugin->settings->destroy();
+		}
 	}
 
 }
