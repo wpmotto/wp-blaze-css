@@ -33,11 +33,6 @@ abstract class Model {
         
         $where = ['id' => $this->getId()];
 
-        // dd(
-        //     [
-        //         $this->getTable(), $data, $where, $format
-        //     ]
-        // );
         $this->db->update( 
             $this->getTable(), $data, $where, $format
         );
@@ -72,9 +67,10 @@ abstract class Model {
         return $this;
     }
 
-    public function where( $where )
+    public function where( $where, $values = [] )
     {
         $this->query['where'] = $where;
+        $this->query['values'] = $values;
         return $this;
     }
 
@@ -85,7 +81,10 @@ abstract class Model {
         FROM {$this->getTable()}            
         WHERE {$this->query['where']} 
         SQL;
-        return $this->db->get_results( $this->db->prepare( $sql ) );        
+
+        return $this->db->get_results( 
+            $this->db->prepare( $sql, $this->query['values'] ) 
+        );
     }
 
     public function find( $prop, $value )
@@ -99,8 +98,11 @@ abstract class Model {
             $this->db->prepare( $sql, $value ), OBJECT
         );
 
-        $this->id = $row->id;
-        $this->attributes = $row;
+        if( $row ) {
+            $this->id = $row->id;
+            $this->attributes = $row;
+        }
+
         return $this;
     }
 }

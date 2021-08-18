@@ -17,6 +17,9 @@ class Logger {
     {
         $this->plugin = $plugin;
         $this->url = (object) parse_url($postData['url']);
+        if( !isset($this->url->query) )
+            $this->url->query = null;
+
         $this->pageQuery = $postData['log'];
     }
 
@@ -61,9 +64,9 @@ class Logger {
     public function create()
     {
         $logs = (new Log)->select('*')->where("
-            host = '{$this->url->host}'
-            AND path = '{$this->url->path}'
-        ")->get();
+            host = %s
+            AND path = %s
+        ", [$this->url->host, $this->url->path])->get();
         
         if( !empty($logs) ) {
             $this->log = (new Log)->find('id', $logs[0]->id);
