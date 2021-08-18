@@ -16,7 +16,7 @@
  * Plugin Name:       Blaze CSS
  * Plugin URI:        https://github.com/wpmotto/wp-blaze-css
  * Description:       WordPress plugin to render your CSS as fast as possible. Crush your lighthouse scores by simply activating the plugin.
- * Version:           1.0.0
+ * Version:           1.0.1
  * Author:            Motto
  * Author URI:        https://motto.ca
  * License:           GPL-2.0+

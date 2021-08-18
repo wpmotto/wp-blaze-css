@@ -101,8 +101,8 @@ class Plugin {
 
 		$plugin_admin = new Admin( $this );
 
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+		// $this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
+		// $this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 
 	}
 
@@ -125,7 +125,7 @@ class Plugin {
 		 * CSS Purging
 		 */
 		// $this->loader->add_action( 'get_footer', $plugin_frontend, 'generateCSS' );
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_frontend, 'removeQueued', 99 );
+		// $this->loader->add_action( 'wp_enqueue_scripts', $plugin_frontend, 'removeQueued', 99 );
 
 		// to logged in users
         // $this->loader->add_action( 'wp_ajax_blaze_ajax', $plugin_frontend, 'save_page_elements' );
