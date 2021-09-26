@@ -32,34 +32,35 @@ class Schema {
     private function logs_schema()
     {
         return <<<SQL
-            id mediumint(9) NOT NULL AUTO_INCREMENT,
-            logged_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            `host` varchar(55) NOT NULL,
-            `path` varchar(55) NOT NULL,
-            `query` varchar(55),
-            hash CHAR(32) NOT NULL,
-            PRIMARY KEY (id),
-            UNIQUE KEY(`host`, `path`, hash)
-        SQL;
+id mediumint(9) NOT NULL AUTO_INCREMENT,
+logged_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+`host` varchar(55) NOT NULL,
+`path` varchar(55) NOT NULL,
+`query` varchar(55),
+hash CHAR(32) NOT NULL,
+`theme` varchar(55) NOT NULL,
+PRIMARY KEY (id),
+UNIQUE KEY(`host`, `path`, hash)
+SQL;
     }
 
     private function elements_schema()
     {
         return <<<SQL
-            id mediumint(9) NOT NULL AUTO_INCREMENT,
-            log_id mediumint(9) NOT NULL,
-            el_tag tinytext NOT NULL,
-            el_id VARCHAR(255),
-            el_class VARCHAR(510),
-            height FLOAT,
-            `left` FLOAT,
-            `right` FLOAT,
-            `top` FLOAT,
-            width FLOAT,
-            x FLOAT,
-            y FLOAT,
-            PRIMARY KEY  (id)
-        SQL;
+id mediumint(9) NOT NULL AUTO_INCREMENT,
+log_id mediumint(9) NOT NULL,
+el_tag tinytext NOT NULL,
+el_id VARCHAR(255),
+el_class VARCHAR(510),
+height FLOAT,
+`left` FLOAT,
+`right` FLOAT,
+`top` FLOAT,
+width FLOAT,
+x FLOAT,
+y FLOAT,
+PRIMARY KEY  (id)
+SQL;
     }
 
     public function init()
@@ -67,7 +68,7 @@ class Schema {
         $sql = [];
         foreach( $this->tables as $table ) {
             $schema = $this->{$table . '_schema'}();
-            $sql[] = "CREATE TABLE {$this->getTableName($table)} (
+            $sql[] = "CREATE TABLE IF NOT EXISTS {$this->getTableName($table)} (
                 $schema
             ) {$this->db->get_charset_collate()};";
         }
@@ -105,6 +106,6 @@ class Schema {
         //     dbDelta( $sql );
         
         //     update_option( "jal_db_version", $jal_db_version );
-        // }        
+        // }
     }
 }

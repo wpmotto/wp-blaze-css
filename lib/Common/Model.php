@@ -90,9 +90,9 @@ abstract class Model {
     public function find( $prop, $value )
     {
         $sql = <<<SQL
-        SELECT * FROM {$this->getTable()}
-        WHERE $prop = %s
-        SQL;
+SELECT * FROM {$this->getTable()}
+WHERE $prop = %s
+SQL;
 
         $row = $this->db->get_row( 
             $this->db->prepare( $sql, $value ), OBJECT

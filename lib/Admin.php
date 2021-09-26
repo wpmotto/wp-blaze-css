@@ -12,6 +12,8 @@
 
 namespace Motto\BlazeCss;
 
+use Motto\BlazeCss\Common\File;
+
 /**
  * The dashboard-specific functionality of the plugin.
  *
@@ -32,6 +34,7 @@ class Admin {
 	 * @var    Plugin $plugin This plugin's instance.
 	 */
 	private $plugin;
+	// private $settings;
 
 	/**
 	 * Initialize the class and set its properties.
@@ -42,6 +45,7 @@ class Admin {
 	 */
 	public function __construct( Plugin $plugin ) {
 		$this->plugin = $plugin;
+		// $this->settings = new Settings($plugin);
 	}
 
 	/**
@@ -65,7 +69,7 @@ class Admin {
 
 		\wp_enqueue_style(
 			$this->plugin->get_plugin_name(),
-			\plugin_dir_url( dirname( __FILE__ ) ) . 'dist/styles/plugin-name-admin.css',
+			\plugin_dir_url( dirname( __FILE__ ) ) . 'dist/styles/blaze-admin.css',
 			array(),
 			$this->plugin->get_version(),
 			'all' );
@@ -93,11 +97,58 @@ class Admin {
 
 		\wp_enqueue_script(
 			$this->plugin->get_plugin_name(),
-			\plugin_dir_url( dirname( __FILE__ ) ) . 'dist/scripts/plugin-name-admin.js',
+			\plugin_dir_url( dirname( __FILE__ ) ) . 'dist/scripts/blaze-admin.js',
 			array( 'jquery' ),
 			$this->plugin->get_version(),
 			false );
 
+		\wp_localize_script( 
+			$this->plugin->get_plugin_name(), 
+			$this->plugin->get_plugin_name() . '_ajax_object', [
+			'ajax_url'   => admin_url( 'admin-ajax.php' ),
+			'ajax_nonce' => wp_create_nonce( 
+				$this->plugin->get_ajax_nonce_name() 
+			)
+		]);
+
 	}
 
+	public function add_settings_page() {
+		add_options_page( 
+			__( 'Blaze CSS Settings', 'blazecss' ),
+			__( 'Blaze', 'blazecss' ),
+			'manage_options',
+			$this->plugin->get_plugin_name().'-seetings',
+			[$this->plugin->settings, 'html_settings_page']
+		);
+	}
+
+	public function init_settings() {
+        add_option( $this->plugin->get_plugin_name() .'_plugin_options', ['logging' => 0, 'clean_datas' => 0, 'gcsv_auto' => 0, 'gcsv_path_file' => ''] );
+
+		register_setting( $this->plugin->get_plugin_name() .'_plugin_options', $this->plugin->get_plugin_name().'_plugin_options', [$this->plugin->settings, 'validate_plugin_options']);
+
+		add_settings_section( 'general_settings', 'General', [$this->plugin->settings, 'show_general_text'], $this->plugin->get_plugin_name().'-seetings' );
+
+		add_settings_field( $this->plugin->get_plugin_name() .'_setting_logging', 'Activate Logging', [$this->plugin->settings, 'show_general_logging'], $this->plugin->get_plugin_name().'-seetings', 'general_settings');
+		add_settings_field( $this->plugin->get_plugin_name() .'_setting_clean_datas', 'Clean Datas', [$this->plugin->settings, 'show_general_clean_datas'], $this->plugin->get_plugin_name().'-seetings', 'general_settings' );
+
+		add_settings_section( 'generate_csv_settings', 'Generation results CSV Options', [$this->plugin->settings, 'show_generate_csv_text'], $this->plugin->get_plugin_name().'-seetings' );
+
+		add_settings_field( $this->plugin->get_plugin_name() .'_setting_gcsv_auto', 'Generate Automaticaly', [$this->plugin->settings, 'show_gcsv_auto'], $this->plugin->get_plugin_name().'-seetings', 'generate_csv_settings');
+		add_settings_field( $this->plugin->get_plugin_name() .'_setting_gcsv_path_file', 'Path CSV File', [$this->plugin->settings, 'show_gcsv_path_file'], $this->plugin->get_plugin_name().'-seetings', 'generate_csv_settings' );
+	}
+
+	public function generate_csv()
+	{
+		// check nonce
+        \check_ajax_referer( 
+			$this->plugin->get_ajax_nonce_name(), 
+			'_ajax_nonce' 
+		);
+
+        $file = new File($this->plugin);
+		$file->write();
+        die(); 
+	}
 }
