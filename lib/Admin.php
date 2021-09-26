@@ -35,6 +35,8 @@ class Admin {
 	 */
 	private $plugin;
 
+	private $settings;
+
 	/**
 	 * Initialize the class and set its properties.
 	 *
