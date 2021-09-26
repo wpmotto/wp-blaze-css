@@ -36,9 +36,7 @@ class Deactivator {
 	 */
 	public static function deactivate() {
 		$plugin = new Plugin();
-
-		$plugin_options = $plugin->settings->get_plugin_options();
-		if( isset($plugin_options['clean_datas']) && $plugin_options['clean_datas']){
+		if( $plugin->settings->get_option('clean_data') == 1 ) {
 			$schema = new Schema($plugin);
 			$schema->destroy();
 			$plugin->settings->destroy();

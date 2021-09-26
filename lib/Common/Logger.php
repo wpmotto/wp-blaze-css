@@ -50,12 +50,10 @@ class Logger {
             $this->create();
             Element::fromLogger( $this );
 
-            $plugin_options = $this->plugin->settings->get_plugin_options();
-            if( isset($plugin_options['gcsv_auto']) && $plugin_options['gcsv_auto'] ){
+            if( (bool) $this->plugin->settings->get_option('gcsv_auto') ) {
                 $file = new File($this->plugin);
                 $file->write();
-            }
-            
+            }            
         }
     }
 

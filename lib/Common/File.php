@@ -14,15 +14,20 @@ class File {
 
     public function write() 
     {   
-        $plugin_options = $this->plugin->settings->get_plugin_options();
-        if( isset($plugin_options['gcsv_path_file']) && !empty($plugin_options['gcsv_path_file']) ){
-            $path = WP_CONTENT_DIR . '/' . $plugin_options['gcsv_path_file'];
-        }else{
-            $path = wp_get_upload_dir()['basedir'] . '/blaze.csv';
+        $path = wp_get_upload_dir()['basedir'] . '/blaze.csv';
+        $csv_file_path = $this->plugin->settings->get_option('gcsv_path_file');
+        if( !empty($csv_file_path) ) {
+            $path = WP_CONTENT_DIR . '/' . $csv_file_path;
         }
 		
-        $elements = (new Element)->select('DISTINCT el_class')->where('el_class IS NOT NULL')->get();
-        $classes = implode("\n", array_column($elements, 'el_class'));
+        $elements = (new Element)->select('DISTINCT el_class')
+                                ->where('el_class IS NOT NULL')
+                                ->get();
+
+        $classes = implode(
+            "\n", array_column($elements, 'el_class')
+        );
+        
         file_put_contents($path, $classes);
     }
 

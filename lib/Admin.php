@@ -34,7 +34,6 @@ class Admin {
 	 * @var    Plugin $plugin This plugin's instance.
 	 */
 	private $plugin;
-	// private $settings;
 
 	/**
 	 * Initialize the class and set its properties.
@@ -45,7 +44,8 @@ class Admin {
 	 */
 	public function __construct( Plugin $plugin ) {
 		$this->plugin = $plugin;
-		// $this->settings = new Settings($plugin);
+		$this->settings = new Settings( $plugin );
+		$this->settings->add_page('settings', 'Blaze Settings');
 	}
 
 	/**
@@ -73,7 +73,6 @@ class Admin {
 			array(),
 			$this->plugin->get_version(),
 			'all' );
-
 	}
 
 	/**
@@ -118,25 +117,66 @@ class Admin {
 			__( 'Blaze CSS Settings', 'blazecss' ),
 			__( 'Blaze', 'blazecss' ),
 			'manage_options',
-			$this->plugin->get_plugin_name().'-seetings',
-			[$this->plugin->settings, 'html_settings_page']
+			$this->settings->get_page_name(),
+			[ $this->settings, 'renderPage' ]
 		);
 	}
 
+	private function getSettingsConfig() {
+		return [
+			'general_settings' => [
+				'label' => 'General',
+				'fields' => [
+					[
+						'name' => 'logging',
+						'label' => 'Activate Logging',
+					],
+					[
+						'name' => 'log_for_all',
+						'label' => 'Log for Logged in Users',
+					],
+					[
+						'name' => 'clean_data',
+						'label' => 'Cleanup',
+					],
+				],
+			],
+			'generate_csv_settings' => [
+				'label' => 'Generation results CSV Options',
+				'fields' => [
+					[
+						'name' => 'gcsv_auto',
+						'label' => 'Generate Automaticaly',
+					],
+					[
+						'name' => 'gcsv_path_file',
+						'label' => 'Path CSV File',
+					],
+				],
+			]
+		];
+	}
+
 	public function init_settings() {
-        add_option( $this->plugin->get_plugin_name() .'_plugin_options', ['logging' => 0, 'clean_datas' => 0, 'gcsv_auto' => 0, 'gcsv_path_file' => ''] );
+		$this->add_generate_csv_after_form();
 
-		register_setting( $this->plugin->get_plugin_name() .'_plugin_options', $this->plugin->get_plugin_name().'_plugin_options', [$this->plugin->settings, 'validate_plugin_options']);
+        add_option( 
+			$this->settings->get_options_name(), [
+				'logging' => 0, 
+				'log_for_all' => 0, 
+				'clean_data' => 0, 
+				'gcsv_auto' => 0, 
+				'gcsv_path_file' => ''
+			] 
+		);
 
-		add_settings_section( 'general_settings', 'General', [$this->plugin->settings, 'show_general_text'], $this->plugin->get_plugin_name().'-seetings' );
+		register_setting( 
+			$this->settings->get_options_name(), 
+			$this->settings->get_options_name(),
+			[ $this, 'validate' ]
+		);
 
-		add_settings_field( $this->plugin->get_plugin_name() .'_setting_logging', 'Activate Logging', [$this->plugin->settings, 'show_general_logging'], $this->plugin->get_plugin_name().'-seetings', 'general_settings');
-		add_settings_field( $this->plugin->get_plugin_name() .'_setting_clean_datas', 'Clean Datas', [$this->plugin->settings, 'show_general_clean_datas'], $this->plugin->get_plugin_name().'-seetings', 'general_settings' );
-
-		add_settings_section( 'generate_csv_settings', 'Generation results CSV Options', [$this->plugin->settings, 'show_generate_csv_text'], $this->plugin->get_plugin_name().'-seetings' );
-
-		add_settings_field( $this->plugin->get_plugin_name() .'_setting_gcsv_auto', 'Generate Automaticaly', [$this->plugin->settings, 'show_gcsv_auto'], $this->plugin->get_plugin_name().'-seetings', 'generate_csv_settings');
-		add_settings_field( $this->plugin->get_plugin_name() .'_setting_gcsv_path_file', 'Path CSV File', [$this->plugin->settings, 'show_gcsv_path_file'], $this->plugin->get_plugin_name().'-seetings', 'generate_csv_settings' );
+		$this->settings->registerSettings( $this->getSettingsConfig() );
 	}
 
 	public function generate_csv()
@@ -151,4 +191,30 @@ class Admin {
 		$file->write();
         die(); 
 	}
+
+	private function add_generate_csv_after_form()
+	{
+		add_action('after_blaze-settings_page', function() {
+			if( $this->settings->get_option('gcsv_auto') == 1 )
+				return;
+		?>
+		<div>
+			<h3>Manually Generate CSS .CSV File</h3>
+			<p>Click on the following button to generate the .csv file with the results.</p>
+			<button id="<?php echo $this->settings->field_id_from_name('btn_generate_csv') ?>">
+				Generate CSV
+			</button>
+		</div>	
+		<?php		
+		});
+	}
+
+	public function validate( $input ) {
+		$input['logging'] = boolval($input['logging']);
+		$input['clean_data'] = boolval($input['clean_data']);
+		$input['gcsv_auto'] = boolval($input['gcsv_auto']);
+		$input['gcsv_path_file'] = strval(trim($input['gcsv_auto']));
+
+		return $input;
+    }
 }
