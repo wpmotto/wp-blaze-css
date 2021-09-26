@@ -12,6 +12,8 @@
 
 namespace Motto\BlazeCss;
 
+use Motto\BlazeCss\Common\File;
+
 /**
  * The dashboard-specific functionality of the plugin.
  *
@@ -42,6 +44,8 @@ class Admin {
 	 */
 	public function __construct( Plugin $plugin ) {
 		$this->plugin = $plugin;
+		$this->settings = new Settings( $plugin );
+		$this->settings->add_page('settings', 'Blaze Settings');
 	}
 
 	/**
@@ -65,11 +69,10 @@ class Admin {
 
 		\wp_enqueue_style(
 			$this->plugin->get_plugin_name(),
-			\plugin_dir_url( dirname( __FILE__ ) ) . 'dist/styles/plugin-name-admin.css',
+			\plugin_dir_url( dirname( __FILE__ ) ) . 'dist/styles/blaze-admin.css',
 			array(),
 			$this->plugin->get_version(),
 			'all' );
-
 	}
 
 	/**
@@ -93,11 +96,125 @@ class Admin {
 
 		\wp_enqueue_script(
 			$this->plugin->get_plugin_name(),
-			\plugin_dir_url( dirname( __FILE__ ) ) . 'dist/scripts/plugin-name-admin.js',
+			\plugin_dir_url( dirname( __FILE__ ) ) . 'dist/scripts/blaze-admin.js',
 			array( 'jquery' ),
 			$this->plugin->get_version(),
 			false );
 
+		\wp_localize_script( 
+			$this->plugin->get_plugin_name(), 
+			$this->plugin->get_plugin_name() . '_ajax_object', [
+			'ajax_url'   => admin_url( 'admin-ajax.php' ),
+			'ajax_nonce' => wp_create_nonce( 
+				$this->plugin->get_ajax_nonce_name() 
+			)
+		]);
+
 	}
 
+	public function add_settings_page() {
+		add_options_page( 
+			__( 'Blaze CSS Settings', 'blazecss' ),
+			__( 'Blaze', 'blazecss' ),
+			'manage_options',
+			$this->settings->get_page_name(),
+			[ $this->settings, 'renderPage' ]
+		);
+	}
+
+	private function getSettingsConfig() {
+		return [
+			'general_settings' => [
+				'label' => 'General',
+				'fields' => [
+					[
+						'name' => 'logging',
+						'label' => 'Activate Logging',
+					],
+					[
+						'name' => 'log_for_all',
+						'label' => 'Log for Logged in Users',
+					],
+					[
+						'name' => 'clean_data',
+						'label' => 'Cleanup',
+					],
+				],
+			],
+			'generate_csv_settings' => [
+				'label' => 'Generation results CSV Options',
+				'fields' => [
+					[
+						'name' => 'gcsv_auto',
+						'label' => 'Generate Automaticaly',
+					],
+					[
+						'name' => 'gcsv_path_file',
+						'label' => 'Path CSV File',
+					],
+				],
+			]
+		];
+	}
+
+	public function init_settings() {
+		$this->add_generate_csv_after_form();
+
+        add_option( 
+			$this->settings->get_options_name(), [
+				'logging' => 0, 
+				'log_for_all' => 0, 
+				'clean_data' => 0, 
+				'gcsv_auto' => 0, 
+				'gcsv_path_file' => ''
+			] 
+		);
+
+		register_setting( 
+			$this->settings->get_options_name(), 
+			$this->settings->get_options_name(),
+			[ $this, 'validate' ]
+		);
+
+		$this->settings->registerSettings( $this->getSettingsConfig() );
+	}
+
+	public function generate_csv()
+	{
+		// check nonce
+        \check_ajax_referer( 
+			$this->plugin->get_ajax_nonce_name(), 
+			'_ajax_nonce' 
+		);
+
+        $file = new File($this->plugin);
+		$file->write();
+        die(); 
+	}
+
+	private function add_generate_csv_after_form()
+	{
+		add_action('after_blaze-settings_page', function() {
+			if( $this->settings->get_option('gcsv_auto') == 1 )
+				return;
+		?>
+		<div>
+			<h3>Manually Generate CSS .CSV File</h3>
+			<p>Click on the following button to generate the .csv file with the results.</p>
+			<button id="<?php echo $this->settings->field_id_from_name('btn_generate_csv') ?>">
+				Generate CSV
+			</button>
+		</div>	
+		<?php		
+		});
+	}
+
+	public function validate( $input ) {
+		$input['logging'] = boolval($input['logging']);
+		$input['clean_data'] = boolval($input['clean_data']);
+		$input['gcsv_auto'] = boolval($input['gcsv_auto']);
+		$input['gcsv_path_file'] = strval(trim($input['gcsv_auto']));
+
+		return $input;
+    }
 }

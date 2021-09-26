@@ -49,7 +49,11 @@ class Logger {
         if( $this->cacheMiss() ) {
             $this->create();
             Element::fromLogger( $this );
-            File::write();
+
+            if( (bool) $this->plugin->settings->get_option('gcsv_auto') ) {
+                $file = new File($this->plugin);
+                $file->write();
+            }            
         }
     }
 
@@ -76,12 +80,15 @@ class Logger {
                 'hash' => $this->hash(),
             ]);
         } else {
+            $current_theme = wp_get_theme();
+
             $this->log = new Log;
             $this->log->insert([
                 'host' => $this->url->host,
                 'path' => $this->url->path,
                 'query' => $this->url->query,
                 'hash' => $this->hash(),
+                'theme' => $current_theme->get( 'Name' ),
             ]);
         }
 
