@@ -4,7 +4,7 @@
  * The dashboard-specific functionality of the plugin.
  *
  * @link       https://github.com/wpmotto/wp-blaze-css
- * @since      1.0.0
+ * @since      1.1.2
  *
  * @package    BlazeCss
  * @subpackage BlazeCss/admin

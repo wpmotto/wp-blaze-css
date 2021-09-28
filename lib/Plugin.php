@@ -7,7 +7,7 @@
  * public-facing side of the site and the dashboard.
  *
  * @link       https://github.com/wpmotto/wp-blaze-css
- * @since      1.0.0
+ * @since      1.1.2
  *
  * @package    BlazeCss
  * @subpackage BlazeCss/includes
@@ -24,7 +24,7 @@ namespace Motto\BlazeCss;
  * Also maintains the unique identifier of this plugin as well as the current
  * version of the plugin.
  *
- * @since      1.0.0
+ * @since      1.1.2
  * @package    BlazeCss
  * @subpackage BlazeCss/includes
  * @author     Greg Hunt <plugins@wpmotto.com>
@@ -35,7 +35,7 @@ class Plugin {
 	 * The loader that's responsible for maintaining and registering all hooks that power
 	 * the plugin.
 	 *
-	 * @since    1.0.0
+	 * @since    1.1.2
 	 * @access   protected
 	 * @var      Motto\BlazeCss\Loader    $loader    Maintains and registers all hooks for the plugin.
 	 */
@@ -61,7 +61,7 @@ class Plugin {
 	 * @access   protected
 	 * @var      string    $version    The current version of the plugin.
 	 */
-	protected $version = '1.0.0';
+	protected $version = '1.1.2';
 
 	/**
 	 * Define the core functionality of the plugin.
