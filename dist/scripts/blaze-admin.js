@@ -1,10 +1,7 @@
-(function( $ ) {
-	'use strict';
-	
-	$( window ).load(function() {
 
+(function($) {
+	$(document).ready(function(){
 		$( "#blaze_btn_generate_csv" ).click(function() {
-
 			fetch(blaze_ajax_object.ajax_url, {
 				method: 'POST',
 				credentials: 'same-origin',
@@ -16,18 +13,7 @@
 			})
 			.then(response => {
 				console.log('response', response);
-				// return response.json();
 			})
-			// .then(data => {
-			// 	console.log('Success:', data);
-			// })
-			// .catch(error => {
-			// 	console.error('Error:', error);
-			// });
-
 		});
-
 	});
-	 
-
-})( jQuery );
+})(jQuery);

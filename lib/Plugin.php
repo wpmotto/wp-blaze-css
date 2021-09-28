@@ -110,13 +110,11 @@ class Plugin {
 		$plugin_admin = new Admin( $this );
 
 		// $this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
-		// $this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_settings_page' );
 		$this->loader->add_action( 'admin_init', $plugin_admin, 'init_settings' );
-
-		if( (bool) $this->settings->get_option('gcsv_auto') )
-			$this->loader->add_action( 'wp_ajax_blaze_generate_csv', $plugin_admin, 'generate_csv' );
+		$this->loader->add_action( 'wp_ajax_blaze_generate_csv', $plugin_admin, 'generate_csv' );
 	}
 
 	/**

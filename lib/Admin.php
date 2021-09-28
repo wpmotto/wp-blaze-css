@@ -44,7 +44,7 @@ class Admin {
 	 * 
 	 * @param Plugin $plugin This plugin's instance.
 	 */
-	public function __construct( Plugin $plugin ) {
+	public function __construct( Plugin $plugin ) {		
 		$this->plugin = $plugin;
 		$this->settings = new Settings( $plugin );
 		$this->settings->add_page('settings', 'Blaze Settings');
@@ -84,24 +84,15 @@ class Admin {
 	 */
 	public function enqueue_scripts() {
 
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in BlazeCss_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The BlazeCss_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
+		$admin_js =  'dist/scripts/blaze-admin.js';
 
 		\wp_enqueue_script(
 			$this->plugin->get_plugin_name(),
-			\plugin_dir_url( dirname( __FILE__ ) ) . 'dist/scripts/blaze-admin.js',
+			\plugin_dir_url( dirname( __FILE__ ) ) . $admin_js,
 			array( 'jquery' ),
-			$this->plugin->get_version(),
-			false );
+			filectime($this->plugin->get_root_path() . $admin_js),
+			false 
+		);
 
 		\wp_localize_script( 
 			$this->plugin->get_plugin_name(), 
@@ -188,10 +179,10 @@ class Admin {
 			$this->plugin->get_ajax_nonce_name(), 
 			'_ajax_nonce' 
 		);
-
+		
         $file = new File($this->plugin);
-		$file->write();
-        die(); 
+		$result = $file->write();
+		echo json_encode((bool) $result); die(); 
 	}
 
 	private function add_generate_csv_after_form()

@@ -15,8 +15,7 @@ class File {
     public function write() 
     {   
         $csv_file_path = $this->plugin->settings->get_option('gcsv_path_file');
-        $path = WP_CONTENT_DIR . $csv_file_path;
-        
+        $path = WP_CONTENT_DIR . '/' . $csv_file_path;
         $elements = (new Element)->select('DISTINCT el_class')
                                 ->where('el_class IS NOT NULL')
                                 ->get();
@@ -25,7 +24,7 @@ class File {
             "\n", array_column($elements, 'el_class')
         );
         
-        file_put_contents($path, $classes);
+        return file_put_contents($path, $classes);
     }
 
     public static function writeCss( $content )
