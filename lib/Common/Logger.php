@@ -10,13 +10,18 @@ class Logger {
 
     protected $plugin;
     protected $url;
+    protected $viewport;
     protected $pageQuery;
-    protected $log;
+    protected $log = null;
 
     public function __construct( Array $postData, Plugin $plugin )
     {
         $this->plugin = $plugin;
         $this->url = (object) parse_url($postData['url']);
+        $this->viewport = [
+            'width' => $postData['width'],
+            'height' => $postData['height'],
+        ];
         if( !isset($this->url->query) )
             $this->url->query = null;
 
@@ -48,8 +53,13 @@ class Logger {
     {
         if( $this->cacheMiss() ) {
             $this->create();
+
+            /**
+             * Log elements for each user-agent
+             */
             Element::fromLogger( $this );
 
+            // change for event driven do_action
             if( (bool) $this->plugin->settings->get_option('gcsv_auto') ) {
                 $file = new File($this->plugin);
                 $file->write();
@@ -62,7 +72,7 @@ class Logger {
         if( $found = $this->findByHash() )
             $this->log = $found;
 
-        return true;
+        return is_null($this->log);
     }
 
     public function create()
@@ -70,13 +80,18 @@ class Logger {
         $logs = (new Log)->select('*')->where("
             host = %s
             AND path = %s
-        ", [$this->url->host, $this->url->path])->get();
+            AND query = %s
+        ", [
+            $this->url->host, 
+            $this->url->path, 
+            $this->url->query,
+        ])->get();
         
         if( !empty($logs) ) {
             $this->log = (new Log)->find('id', $logs[0]->id);
 
             $this->log->update([
-                'logged_at' => time(),
+                'logged_at' => date('Y-m-d H:i:s'),
                 'hash' => $this->hash(),
             ]);
         } else {
@@ -89,6 +104,8 @@ class Logger {
                 'query' => $this->url->query,
                 'hash' => $this->hash(),
                 'theme' => $current_theme->get( 'Name' ),
+                'width' => $this->viewport['width'],
+                'height' => $this->viewport['height'],
             ]);
         }
 

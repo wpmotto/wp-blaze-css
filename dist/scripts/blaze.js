@@ -21,6 +21,8 @@ document.addEventListener("DOMContentLoaded",function(){
 			action: 'blaze_ajax',
 			_ajax_nonce: blaze_ajax_object.ajax_nonce,
 			url: window.location.href,
+			width: window.innerWidth,
+			height: window.innerHeight,
 			log: JSON.stringify(log),
 		})
 	}).then(response => console.log(response.json()));

@@ -54,9 +54,6 @@ class Frontend {
 	 * @since    1.0.0
 	 */
 	public function enqueue_scripts() {
-		if( is_user_logged_in() )
-			return;
-
 		\wp_enqueue_script(
 			$this->plugin->get_plugin_name(),
 			\plugin_dir_url( dirname( __FILE__ ) ) . 'dist/scripts/blaze.js',

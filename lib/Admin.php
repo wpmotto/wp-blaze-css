@@ -168,7 +168,7 @@ class Admin {
 				'log_for_all' => 0, 
 				'clean_data' => 0, 
 				'gcsv_auto' => 0, 
-				'gcsv_path_file' => ''
+				'gcsv_path_file' => 'uploads/blaze.csv'
 			] 
 		);
 
@@ -212,11 +212,25 @@ class Admin {
 	}
 
 	public function validate( $input ) {
-		$input['logging'] = boolval($input['logging']);
-		$input['clean_data'] = boolval($input['clean_data']);
-		$input['gcsv_auto'] = boolval($input['gcsv_auto']);
-		$input['gcsv_path_file'] = strval(trim($input['gcsv_auto']));
-
+		$input['logging'] = boolval($input['logging'] ?? false);
+		$input['clean_data'] = boolval($input['clean_data'] ?? false);
+		$input['gcsv_auto'] = boolval($input['gcsv_auto'] ?? false);
+		$input['gcsv_path_file'] = $this->sanitizeCsvPath($input['gcsv_path_file']);
 		return $input;
     }
+
+	private function sanitizeCsvPath( $input )
+	{
+		$path = trim(strval($input ?? ''));
+		$dir = dirname(WP_CONTENT_DIR . "/$path");
+		if( $dir && file_exists($dir) ) {
+			return $path;
+		} else {
+			add_settings_error( 
+				$this->settings->field_name_from_name('gcsv_path_file'), 'gcsv_path_file', 
+				"This path does not exist." 
+			);
+			return $this->settings->get_option('gcsv_path_file');
+		}
+	}
 }

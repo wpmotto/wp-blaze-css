@@ -116,7 +116,7 @@ class Settings {
 		return $this->plugin->get_plugin_name() . '_' . $name;
 	}
  	
-	private function field_name_from_name( $name )
+	public function field_name_from_name( $name )
 	{
 		return "{$this->options_name}[$name]";
 	}   

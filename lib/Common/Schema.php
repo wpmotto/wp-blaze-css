@@ -9,8 +9,8 @@ use Motto\BlazeCss\Plugin;
 class Schema {
 
     protected $tables = [
+        'elements',
         'logs', 
-        'elements'
     ];
     protected $db;
     protected $plugin;
@@ -32,48 +32,51 @@ class Schema {
     private function logs_schema()
     {
         return <<<SQL
-id mediumint(9) NOT NULL AUTO_INCREMENT,
-logged_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-`host` varchar(55) NOT NULL,
-`path` varchar(55) NOT NULL,
-`query` varchar(55),
-hash CHAR(32) NOT NULL,
-`theme` varchar(55) NOT NULL,
-PRIMARY KEY (id),
-UNIQUE KEY(`host`, `path`, hash)
-SQL;
+        `id` mediumint(9) NOT NULL AUTO_INCREMENT,
+        `logged_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        `host` varchar(55) NOT NULL,
+        `path` varchar(55) NOT NULL,
+        `query` varchar(55),
+        `hash` CHAR(32) NOT NULL,
+        `theme` varchar(55) NOT NULL,
+        `width` mediumint(9) UNSIGNED NOT NULL,
+        `height` mediumint(9) UNSIGNED NOT NULL,
+        PRIMARY KEY  (id),
+        UNIQUE KEY (`host`, `path`, `hash`)
+        SQL;
     }
 
     private function elements_schema()
     {
         return <<<SQL
-id mediumint(9) NOT NULL AUTO_INCREMENT,
-log_id mediumint(9) NOT NULL,
-el_tag tinytext NOT NULL,
-el_id VARCHAR(255),
-el_class VARCHAR(510),
-height FLOAT,
-`left` FLOAT,
-`right` FLOAT,
-`top` FLOAT,
-width FLOAT,
-x FLOAT,
-y FLOAT,
-PRIMARY KEY  (id)
-SQL;
+        `id` mediumint(9) NOT NULL AUTO_INCREMENT,
+        `log_id` mediumint(9) NOT NULL,
+        `el_tag` tinytext NOT NULL,
+        `el_id` VARCHAR(255),
+        `el_class` VARCHAR(510),
+        `user_agent` VARCHAR(255),
+        `height` FLOAT,
+        `left` FLOAT,
+        `right` FLOAT,
+        `top` FLOAT,
+        `width` FLOAT,
+        `x` FLOAT,
+        `y` FLOAT,
+        PRIMARY KEY  (`id`)
+        SQL;
     }
 
     public function init()
     {
-        $sql = [];
+        require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
         foreach( $this->tables as $table ) {
             $schema = $this->{$table . '_schema'}();
-            $sql[] = "CREATE TABLE IF NOT EXISTS {$this->getTableName($table)} (
+            $sql = "CREATE TABLE IF NOT EXISTS {$this->getTableName($table)} (
                 $schema
-            ) {$this->db->get_charset_collate()};";
+            ) {$this->db->get_charset_collate()}";
+            dbDelta( $sql );
         }
-        require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-        dbDelta( $sql );
+
         add_option( $this->version_key, $this->version );
     }
 

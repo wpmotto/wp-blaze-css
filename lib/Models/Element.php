@@ -15,6 +15,9 @@ class Element extends Model {
 
     public static function fromLogger( Logger $logger )
     {
+        /**
+         * TODO: only add if body width and height are different
+         */
         (new self)->delete(['log_id' => $logger->getLogId()]);
         foreach( $logger->getPageQuery() as $data )
             self::createFromPageElement( $data, $logger->getLogId() );

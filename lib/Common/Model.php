@@ -77,10 +77,10 @@ abstract class Model {
     public function get()
     {
         $sql = <<<SQL
-        SELECT {$this->query['select']} 
-        FROM {$this->getTable()}            
-        WHERE {$this->query['where']} 
-        SQL;
+SELECT {$this->query['select']} 
+FROM {$this->getTable()}            
+WHERE {$this->query['where']} 
+SQL;
 
         return $this->db->get_results( 
             $this->db->prepare( $sql, $this->query['values'] ) 

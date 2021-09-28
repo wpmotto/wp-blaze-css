@@ -32,7 +32,6 @@ dwsync.xml
 
 # Package management
 node_modules/
-vendor/
 
 # Folders to ignore
 .hg

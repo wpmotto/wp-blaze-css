@@ -130,7 +130,7 @@ class Plugin {
 
 		$plugin_frontend = new Frontend( $this );
 
-		if( (bool) $this->settings->get_option('logging') ) {
+		if( $this->should_log() ) {
 			$this->loader->add_action(
 				'wp_enqueue_scripts', $plugin_frontend, 'enqueue_scripts' 
 			);
@@ -146,12 +146,25 @@ class Plugin {
 		// $this->loader->add_action( 'wp_enqueue_scripts', $plugin_frontend, 'removeQueued', 99 );
 
 		// to logged in users
-        // $this->loader->add_action( 'wp_ajax_blaze_ajax', $plugin_frontend, 'save_page_elements' );
+        $this->loader->add_action( 'wp_ajax_blaze_ajax', $plugin_frontend, 'save_page_elements' );
 		
         // to not logged in users or users without permissions
         $this->loader->add_action( 
 			'wp_ajax_nopriv_blaze_ajax', $plugin_frontend, 'save_page_elements' 
 		);
+	}
+
+	private function should_log()
+	{
+		$logging = (bool) $this->settings->get_option('logging');
+		$log_for_all = (bool) $this->settings->get_option('log_for_all');
+		if( !$logging )
+			return false;
+
+		if( !$log_for_all && is_user_logged_in() )
+			return false;
+
+		return true;
 	}
 
 	/**

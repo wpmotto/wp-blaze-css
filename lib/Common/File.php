@@ -14,12 +14,9 @@ class File {
 
     public function write() 
     {   
-        $path = wp_get_upload_dir()['basedir'] . '/blaze.csv';
         $csv_file_path = $this->plugin->settings->get_option('gcsv_path_file');
-        if( !empty($csv_file_path) ) {
-            $path = WP_CONTENT_DIR . '/' . $csv_file_path;
-        }
-		
+        $path = WP_CONTENT_DIR . $csv_file_path;
+        
         $elements = (new Element)->select('DISTINCT el_class')
                                 ->where('el_class IS NOT NULL')
                                 ->get();
