@@ -76,6 +76,11 @@ class Plugin {
 		$this->settings = new Settings($this);
 	}
 
+	public function get_root_path()
+	{
+		return plugin_dir_path( dirname( __FILE__ ) );		
+	}
+
 	/**
 	 * Define the locale for this plugin for internationalization.
 	 *
@@ -104,17 +109,14 @@ class Plugin {
 
 		$plugin_admin = new Admin( $this );
 
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+		// $this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
+		// $this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_settings_page' );
 		$this->loader->add_action( 'admin_init', $plugin_admin, 'init_settings' );
 
-		$plugin_options = $this->settings->get_plugin_options();
-
-		if( (isset($plugin_options['gcsv_auto']) && !$plugin_options['gcsv_auto']) || !isset($plugin_options['gcsv_auto']) ){
+		if( (bool) $this->settings->get_option('gcsv_auto') )
 			$this->loader->add_action( 'wp_ajax_blaze_generate_csv', $plugin_admin, 'generate_csv' );
-		}
 	}
 
 	/**
@@ -128,19 +130,28 @@ class Plugin {
 
 		$plugin_frontend = new Frontend( $this );
 
-		$plugin_options = $this->settings->get_plugin_options();
-
-		if( isset($plugin_options['logging']) && $plugin_options['logging']){
-			$this->loader->add_action( 'wp_enqueue_scripts', $plugin_frontend, 'enqueue_scripts' );
-
-			$this->loader->add_action( 'get_header', $plugin_frontend, 'debug' );
-
-			// to logged in users
-			// $this->loader->add_action( 'wp_ajax_blaze_ajax', $plugin_frontend, 'save_page_elements' );
-			
-			// to not logged in users or users without permissions
-			$this->loader->add_action( 'wp_ajax_nopriv_blaze_ajax', $plugin_frontend, 'save_page_elements' );
+		if( (bool) $this->settings->get_option('logging') ) {
+			$this->loader->add_action(
+				'wp_enqueue_scripts', $plugin_frontend, 'enqueue_scripts' 
+			);
+			$this->loader->add_action( 
+				'get_header', $plugin_frontend, 'debug' 
+			);
 		}
+
+		/**
+		 * CSS Purging
+		 */
+		// $this->loader->add_action( 'get_footer', $plugin_frontend, 'generateCSS' );
+		// $this->loader->add_action( 'wp_enqueue_scripts', $plugin_frontend, 'removeQueued', 99 );
+
+		// to logged in users
+        // $this->loader->add_action( 'wp_ajax_blaze_ajax', $plugin_frontend, 'save_page_elements' );
+		
+        // to not logged in users or users without permissions
+        $this->loader->add_action( 
+			'wp_ajax_nopriv_blaze_ajax', $plugin_frontend, 'save_page_elements' 
+		);
 	}
 
 	/**

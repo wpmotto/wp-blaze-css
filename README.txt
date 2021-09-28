@@ -4,7 +4,7 @@ Donate link: https://motto.ca
 Tags: purgecss, purifycss, uncss, tailwind, css optimization, pagespeed, lighthouse
 Requires at least: 4.1
 Tested up to: 5.7
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -31,6 +31,9 @@ This section describes how to install the plugin and get it working.
 4. A text file in `/wp-content/uploads/blaze.csv` will be generated for use with your build tools. 
 
 == Changelog ==
+
+= 1.0.1 =
+* Fixed some PHP notices. 
 
 = 1.0 =
 * First version. 

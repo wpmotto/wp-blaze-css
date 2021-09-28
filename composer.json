@@ -28,7 +28,8 @@
     },
     "require": {
         "php": ">=7.0",
-        "composer/installers": "~1.0"
+        "composer/installers": "~1.0",
+        "sabberworm/php-css-parser": "^8.3"
     },
     "require-dev": {
         "phpunit/phpunit": "*@stable"

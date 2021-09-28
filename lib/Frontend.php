@@ -12,6 +12,7 @@
 
 namespace Motto\BlazeCss;
 
+use Motto\BlazeCss\Common\File;
 use Motto\BlazeCss\Common\Logger;
 use Motto\BlazeCss\Models\Element;
 
@@ -87,6 +88,34 @@ class Frontend {
 		]);
         die(); 
     }
+
+	public function generateCSS()
+	{
+		global $wp_styles;
+		$css = [];
+		foreach( $wp_styles->queue as $q ) {
+			$css[] .= file_get_contents($wp_styles->registered[$q]->src);
+		}
+		$oCssParser = new \Sabberworm\CSS\Parser(
+			implode(' ', $css)
+		);
+		$oCssDocument = $oCssParser->parse();
+		File::writeCss($oCssDocument->render());
+	}
+
+	public function removeQueued()
+	{
+		global $wp_styles;
+		foreach( $wp_styles->queue as $q ) {
+			wp_dequeue_style( $q );
+		}
+		$path = wp_get_upload_dir()['baseurl'] . '/blaze.css';
+		wp_enqueue_style(
+			'blaze', $path, [], false
+		);
+	}
+
+
 
 	public function debug()
 	{

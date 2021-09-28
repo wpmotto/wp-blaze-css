@@ -17,6 +17,9 @@ class Logger {
     {
         $this->plugin = $plugin;
         $this->url = (object) parse_url($postData['url']);
+        if( !isset($this->url->query) )
+            $this->url->query = null;
+
         $this->pageQuery = $postData['log'];
     }
 
@@ -47,12 +50,10 @@ class Logger {
             $this->create();
             Element::fromLogger( $this );
 
-            $plugin_options = $this->plugin->settings->get_plugin_options();
-            if( isset($plugin_options['gcsv_auto']) && $plugin_options['gcsv_auto'] ){
+            if( (bool) $this->plugin->settings->get_option('gcsv_auto') ) {
                 $file = new File($this->plugin);
                 $file->write();
-            }
-            
+            }            
         }
     }
 
@@ -67,9 +68,9 @@ class Logger {
     public function create()
     {
         $logs = (new Log)->select('*')->where("
-            host = '{$this->url->host}'
-            AND path = '{$this->url->path}'
-        ")->get();
+            host = %s
+            AND path = %s
+        ", [$this->url->host, $this->url->path])->get();
         
         if( !empty($logs) ) {
             $this->log = (new Log)->find('id', $logs[0]->id);
